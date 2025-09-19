@@ -69,15 +69,14 @@ pipeline {
                     // Your notes-app-deployment.yaml should have an image name like: akash210994/to-do-app:latest
                     bat "dir"
                     echo "Applying Kubernetes manifests..."
-                    bat "kubectl apply -f to-do-app-deployment.yml"
                     bat "kubectl apply -f postgres-deployment.yml"
-                    
-                    // Add a small delay to allow resources to be created
+                    sleep(10) 
+                    bat "kubectl apply -f to-do-app-deployment.yml"
                     sleep(10) 
 
                     echo "Verifying deployment..."
-                    bat "kubectl get service"
                     bat "kubectl get pods"
+                    bat "kubectl get service"
                 }
             }
         }
