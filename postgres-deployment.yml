@@ -1,0 +1,69 @@
+# This file defines all the Kubernetes objects needed for the PostgreSQL database.
+
+# 1. Secret for storing database credentials securely.
+# Data must be base64 encoded.
+# echo -n 'myuser' | base64 -> bXl1c2Vy
+# echo -n 'mypassword' | base64 -> bXlwYXNzd29yZA==
+# echo -n 'mydatabase' | base64 -> bXlkYXRhYmFzZQ==
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret
+type: Opaque
+data:
+  POSTGRES_DB: bXlkYXRhYmFzZQ==
+  POSTGRES_USER: bXl1c2Vy
+  POSTGRES_PASSWORD: bXlwYXNzd29yZA==
+---
+# 2. Headless Service for the StatefulSet.
+# This provides a stable network identity for the database pod.
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  ports:
+    - port: 5432
+  selector:
+    app: postgres
+  clusterIP: None # Defines this as a "headless" service
+---
+# 3. StatefulSet to manage the PostgreSQL pod.
+# StatefulSets are ideal for stateful applications like databases.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+spec:
+  serviceName: "postgres-service"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+              name: postgredb
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+  # 4. Persistent Volume Claim Template.
+  # This automatically creates a PersistentVolumeClaim to request storage.
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi # Request 1 Gibibyte of storage

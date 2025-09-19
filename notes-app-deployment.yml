@@ -1,0 +1,62 @@
+# This file defines the Kubernetes objects for the Node.js notes application.
+
+# 1. ConfigMap for non-sensitive configuration.
+# This tells the app how to find the database service.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notes-app-config
+data:
+  POSTGRES_HOST: "postgres-service"
+---
+# 2. Deployment for the notes application.
+# This manages the application pods and handles scaling.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app-deployment
+  labels:
+    app: notes-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: notes-app # This now correctly matches the template labels below
+  template:
+    metadata:
+      labels:
+        app: notes-app # Corrected from "notes-application" to match the selector
+    spec:
+      containers:
+        - name: notes-app-container
+          image: akash210994/notes-app:latest
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: notes-app-config
+            - secretRef:
+                name: postgres-secret # Reuses the same secret for credentials
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+---
+# 3. Service to expose the notes application to the internet.
+# Using type LoadBalancer will provision an external IP address on most cloud providers.
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-app-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80 # External port
+      targetPort: 3000 # Internal port of the container
+  selector:
+    app: notes-app
+
