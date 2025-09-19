@@ -42,3 +42,18 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "250m"
+---
+# 3. Service to expose the to-do-app application
+apiVersion: v1
+kind: Service
+metadata:
+  name: to-do-app-service
+spec:
+  # Use LoadBalancer to expose the service outside of the cluster.
+  # On local setups like Docker Desktop, it will use localhost.
+  type: LoadBalancer
+  ports:
+    - port: 80         # The port the service is available on externally
+      targetPort: 3000   # The port the container is listening on
+  selector:
+    app: to-do-app     # This MUST match the labels of your Deployment's pods
