@@ -5,39 +5,37 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: notes-app-config
+  name: to-do-app-config
 data:
   POSTGRES_HOST: "postgres-service"
----
-# 2. Deployment for the notes application.
-# This manages the application pods and handles scaling.
+  
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: notes-app-deployment
+  name: to-do-app-deployment
   labels:
-    app: notes-app
+    app: to-do-app
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: notes-app # This now correctly matches the template labels below
+      app: to-do-app
   template:
     metadata:
       labels:
-        app: notes-app # Corrected from "notes-application" to match the selector
+        app: to-do-app
     spec:
       containers:
-        - name: notes-app-container
-          image: akash210994/notes-app:latest
+        - name: to-do-app-container
+          image: akash210994/to-do-app:latest
           ports:
             - containerPort: 3000
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
-                name: notes-app-config
+                name: to-do-app-config
             - secretRef:
-                name: postgres-secret # Reuses the same secret for credentials
+                name: postgres-secret
           resources:
             requests:
               memory: "64Mi"
@@ -51,12 +49,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: notes-app-service
+  name: to-do-app-service
 spec:
   type: LoadBalancer
   ports:
     - port: 80 # External port
       targetPort: 3000 # Internal port of the container
   selector:
-    app: notes-app
+    app: to-do-app
 

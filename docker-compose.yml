@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./express-volume-app-web:/app
+      - ./to-do-app-web:/app
     depends_on:
       - db
     environment:

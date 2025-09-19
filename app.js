@@ -63,7 +63,7 @@ app.get('/', async (req, res) => {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Notes App</title>
+                <title>To Do App</title>
                 <style>
                     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f4f9; color: #333; margin: 0; padding: 1rem; }
                     h1, h2 { color: #4a4a4a; text-align: center; }
@@ -84,7 +84,7 @@ app.get('/', async (req, res) => {
             </head>
             <body>
                 <div class="container">
-                    <h1>PostgreSQL Notes App</h1>
+                    <h1>To Do App</h1>
                     <form action="/submit" method="POST">
                         <input type="text" name="note" placeholder="Enter your note" required>
                         <button type="submit">Save Note</button>
