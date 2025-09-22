@@ -4,7 +4,7 @@ pipeline {
 
     // Central environment block to define variables used across stages
     environment {
-        DOCKERHUB_USER  = 'akash210994'
+        DOCKERHUB_USER  = 'sumatisinha'
         IMAGE_NAME      = 'to-do-app'
         // Jenkins credentials ID for Docker Hub
         DOCKER_CREDS_ID = 'dockerhub-creds'
@@ -16,7 +16,7 @@ pipeline {
                 echo "Running on Windows node: ${env.NODE_NAME}"
                 // Clean the workspace before checking out new code
                 cleanWs()
-                git url: 'https://github.com/akash2109/ToDo-App.git', branch: 'main'
+                git url: 'https://github.com/sumatisinha/ToDo-App-sumati.git', branch: 'main'
             }
         }
 
