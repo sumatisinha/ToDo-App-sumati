@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: to-do-app-container
-          image: akash210994/to-do-app:latest
+          image: sumatisinha/to-do-app:latest
           ports:
             - containerPort: 3000
           imagePullPolicy: IfNotPresent
